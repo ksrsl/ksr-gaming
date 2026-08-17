@@ -110,7 +110,6 @@ type ShareState = {
   enabled: boolean;
   connected: boolean;
   isHost: boolean;
-  viewers: number;
   room: string;
   label: string;
 };
@@ -159,7 +158,7 @@ export default function KSRGaming() {
   const profileInputRef = useRef<HTMLInputElement>(null);
   const syncRef = useRef<ConsoleSync | null>(null);
   const applyingRemoteRef = useRef(false);
-  const [share, setShare] = useState<ShareState>({ enabled: false, connected: false, isHost: true, viewers: 1, room: "LOCAL", label: "LOCAL" });
+  const [share, setShare] = useState<ShareState>({ enabled: false, connected: false, isHost: true, room: "LOCAL", label: "LOCAL" });
   const clock = useClock();
 
   useEffect(() => {
@@ -205,9 +204,6 @@ export default function KSRGaming() {
       const role = payload as { host: boolean };
       setShare((current) => ({ ...current, isHost: role.host }));
     });
-    const removeViewers = sync.on("viewers", (payload) => {
-      setShare((current) => ({ ...current, viewers: Number(payload) || 1 }));
-    });
     const removeState = sync.on("state", (payload) => {
       const state = payload as SharedConsoleState | undefined;
       if (!state || !games.some((game) => game.id === state.selectedId)) return;
@@ -222,7 +218,6 @@ export default function KSRGaming() {
     return () => {
       removeStatus?.();
       removeRole?.();
-      removeViewers?.();
       removeState?.();
       window.clearTimeout(setupTimer);
       sync.close();
@@ -381,7 +376,7 @@ export default function KSRGaming() {
             </div>
             <div className="game-hud-controls">
               <button onClick={() => setFrameKey((value) => value + 1)}>RELOAD</button>
-              <span className={`share-chip ${share.connected ? "live" : ""}`}>{share.enabled ? `${share.viewers} SCREEN${share.viewers === 1 ? "" : "S"} // ${share.isHost ? "HOST" : "VIEW"}` : "LOCAL PLAY"}</span>
+              <span className={`share-chip ${share.connected ? "live" : ""}`}>{share.enabled ? `SHARED // ${share.isHost ? "HOST" : "VIEW"}` : "LOCAL PLAY"}</span>
               <button className="game-hud-exit" onClick={exitGame} disabled={share.enabled && !share.isHost}>EXIT TO CONSOLE</button>
             </div>
           </div>
@@ -408,7 +403,7 @@ export default function KSRGaming() {
               <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="SEARCH CATALOG" aria-label="Search games" disabled={share.enabled && !share.isHost} />
               <kbd>/</kbd>
             </label>
-            <div className="top-status"><span className={`status-dot ${share.connected ? "shared" : ""}`} /><span>{share.enabled ? `${share.viewers} CONNECTED` : `PLAYER ${username.toUpperCase()}`}</span><b>{clock}</b><button onClick={powerCycle} title="Replay power-on sequence" disabled={share.enabled && !share.isHost}>⏻</button></div>
+            <div className="top-status"><span className={`status-dot ${share.connected ? "shared" : ""}`} /><span>{share.enabled ? `SCREEN SHARE ${share.isHost ? "HOST" : "VIEW"}` : `PLAYER ${username.toUpperCase()}`}</span><b>{clock}</b><button onClick={powerCycle} title="Replay power-on sequence" disabled={share.enabled && !share.isHost}>⏻</button></div>
           </header>
 
           <aside className="nav-rail">
@@ -480,7 +475,7 @@ export default function KSRGaming() {
                   <div className="share-symbol"><span>◉</span><b>{share.connected ? "LIVE" : share.enabled ? share.label : "READY"}</b></div>
                   <div className="share-copy">
                     <span>{share.enabled ? "SHARED CONSOLE SESSION" : "SCREEN LINK STANDBY"}</span>
-                    <h3>{share.enabled ? `${share.viewers} DISPLAY${share.viewers === 1 ? "" : "S"} CONNECTED` : "POWER ON FROM SECOND LIFE"}</h3>
+                    <h3>{share.enabled ? "ROOM DISPLAY LINKED" : "POWER ON FROM SECOND LIFE"}</h3>
                     <p>{share.enabled ? "The host controls the KSR dashboard, selected title, launch and exit state. Every connected media surface follows the same console session." : "The Second Life controller automatically opens a private room when the console powers on."}</p>
                   </div>
                   <div className="share-metrics">

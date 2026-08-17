@@ -235,7 +235,7 @@ export default function KSRGaming() {
             <h1>KSR GAMING</h1>
             <p>PLAY BEYOND THE GRID</p>
           </div>
-          <div className="boot-data boot-data-left"><b>DISPLAY</b><span>1024 × 576</span><b>MEDIA</b><span>SECURE CHANNEL</span></div>
+          <div className="boot-data boot-data-left"><b>DISPLAY</b><span>2048 × 2048</span><b>MEDIA</b><span>SECURE CHANNEL</span></div>
           <div className="boot-data boot-data-right"><b>CORE</b><span>07 TITLES</span><b>STATUS</b><span>AUTHORIZED</span></div>
           <div className="boot-progress"><span /></div>
           <div className="boot-status" key={bootMessage}>{bootMessages[bootMessage]}</div>
@@ -287,7 +287,7 @@ export default function KSRGaming() {
             <button className={`nav-item ${view === "library" ? "active" : ""}`} onClick={() => changeView("library")}><span>02</span>Library</button>
             <button className={`nav-item ${view === "favorites" ? "active" : ""}`} onClick={() => changeView("favorites")}><span>03</span>Favorites<b>{favorites.length}</b></button>
             <button className={`nav-item ${view === "system" ? "active" : ""}`} onClick={() => changeView("system")}><span>04</span>System</button>
-            <div className="rail-footer"><span>MEDIA CORE</span><strong>v0.1</strong><i /></div>
+            <div className="rail-footer"><span>MEDIA CORE</span><strong>v0.2</strong><i /></div>
           </aside>
 
           <section className="dashboard">
@@ -334,7 +334,7 @@ export default function KSRGaming() {
                 <div className="catalog-heading"><span>CONSOLE CONTROL</span><h2>System</h2><p>Second Life media runtime</p></div>
                 <div className="system-grid">
                   <div className="system-card accent"><small>CORE STATUS</small><strong>ONLINE</strong><p>All {games.length} authorized game channels are loaded into the catalog.</p><i /></div>
-                  <div className="system-card"><small>DISPLAY PROFILE</small><strong>1024 × 576</strong><p>Optimized for a 16:9 Media-on-a-Prim face.</p></div>
+                  <div className="system-card"><small>DISPLAY PROFILE</small><strong>2048 × 2048</strong><p>Ultra-resolution square Media-on-a-Prim profile.</p></div>
                   <div className="system-card"><small>LOCAL COLLECTION</small><strong>{favorites.length} FAVORITES</strong><p>{recent.length ? `Recently played: ${recent.map((id) => games.find((game) => game.id === id)?.name).filter(Boolean).join(", ")}` : "No recent sessions on this viewer."}</p></div>
                   <div className="system-card power-card"><small>POWER SEQUENCE</small><strong>REPLAY STARTUP</strong><p>Run the complete KSR Gaming boot sequence again.</p><button onClick={powerCycle}>POWER CYCLE <span>⏻</span></button></div>
                 </div>

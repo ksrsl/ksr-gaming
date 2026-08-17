@@ -1,4 +1,4 @@
-# KSR Gaming — Second Life Prototype v0.1
+# KSR Gaming — Second Life Hosted v0.2
 
 KSR Gaming is an independent Media-on-a-Prim launcher for Second Life. It includes a cinematic blue-and-white startup, a searchable catalog, favorites, recent games, and a focused full-screen player.
 
@@ -39,7 +39,7 @@ If the model uses different link names, change the three link-name settings at t
 
 - Shared Media / Media-on-a-Prim must be enabled in the viewer.
 - Click the display once so keyboard, mouse, and gamepad input are focused inside the game.
-- A 16:9 screen face is recommended. The launcher is optimized for 1024 × 576.
+- Use a square screen face. The launcher and controller are configured for the maximum 2048 × 2048 Media-on-a-Prim profile.
 - The controller permits anyone to interact with the media while keeping media-bar controls owner-only.
 - Set `OWNER_ONLY_POWER = TRUE` if only the owner should control power.
 

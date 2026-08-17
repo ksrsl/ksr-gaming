@@ -22,7 +22,7 @@ test("server-renders the KSR Gaming launcher", async () => {
   const html = await response.text();
   assert.match(html, /<title>KSR Gaming<\/title>/i);
   assert.match(html, /KSR GAMING/);
-  assert.match(html, /AUTHORIZED CATALOG/);
+  assert.match(html, /SELECT A TITLE/);
   assert.match(html, /SocCar/);
   assert.match(html, /Zombie Ops/);
   assert.doesNotMatch(html, /GameStation/i);
@@ -51,14 +51,17 @@ test("requires a player identity and presents games as a dedicated console sessi
   const source = await readFile(new URL("../app/KSRGaming.tsx", import.meta.url), "utf8");
   const styles = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
 
-  assert.match(source, /CHOOSE YOUR/);
+  assert.match(source, /Choose the username/);
   assert.match(source, /ksr-gaming-username/);
-  assert.match(source, /EXIT TO CONSOLE/);
-  assert.match(source, /Screen Share/);
-  assert.match(source, /SHARED CONSOLE SESSION/);
-  assert.match(styles, /\.frame-stage\s*\{[^}]*inset:64px 0 0;/);
-  assert.match(styles, /\.game-hud\s*\{[^}]*top:0;/);
-  assert.match(styles, /border-radius:34px/);
+  assert.match(source, /console-tabs/);
+  assert.match(source, /game-strip/);
+  assert.match(source, /slide-/);
+  assert.match(source, /addEventListener\("pointerdown", focusMediaWindow, true\)/);
+  assert.match(source, /iframeRef\.current\?\.focus/);
+  assert.doesNotMatch(source, /Screen Share|SHARED CONSOLE SESSION|CONNECTED DISPLAY/i);
+  assert.match(styles, /\.frame-stage\s*\{[^}]*position:absolute;[^}]*inset:0;/);
+  assert.match(styles, /\.game-hud\s*\{[^}]*top:16px;/);
+  assert.match(styles, /@media \(min-width:1400px\) and \(min-height:800px\)/);
 });
 
 test("ships isolated shared-console infrastructure", async () => {
@@ -69,8 +72,15 @@ test("ships isolated shared-console infrastructure", async () => {
   assert.match(controller, /SYNC_URL/);
   assert.match(controller, /room=/);
   assert.match(controller, /token=/);
+  assert.match(controller, /AUTO_RESOLUTION = TRUE/);
+  assert.match(controller, /MAX_MEDIA_PIXELS = 2048/);
+  assert.match(controller, /PRIM_MEDIA_CONTROLS_NONE/);
+  assert.match(controller, /PRIM_MEDIA_FIRST_CLICK_INTERACT, TRUE/);
+  assert.match(controller, /llSetTimerEvent\(2\.0\)/);
   assert.match(client, /class ConsoleSync/);
+  assert.doesNotMatch(client, /viewers/);
   assert.match(relay, /class ConsoleRoom extends DurableObject/);
   assert.match(relay, /ksr-gaming-sync/);
+  assert.doesNotMatch(relay, /type: "viewers"/);
   assert.doesNotMatch(relay, /gameboi/i);
 });

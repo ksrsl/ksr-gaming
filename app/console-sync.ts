@@ -1,4 +1,4 @@
-export type ConsoleView = "home" | "library" | "favorites" | "share" | "system";
+export type ConsoleView = "home" | "library" | "favorites" | "system";
 
 export type SharedConsoleState = {
   view: ConsoleView;
@@ -6,7 +6,7 @@ export type SharedConsoleState = {
   playingId: string | null;
 };
 
-type SyncEvent = "status" | "role" | "viewers" | "state";
+type SyncEvent = "status" | "role" | "state";
 type SyncListener = (payload: unknown) => void;
 
 const makeId = () => globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -76,8 +76,6 @@ export class ConsoleSync {
         this.isHost = Boolean(message.host);
         this.emit("role", { host: this.isHost });
         if (message.state?._sourceId !== this.clientId) this.emit("state", message.state);
-      } else if (message.type === "viewers") {
-        this.emit("viewers", Math.max(1, Number(message.count) || 1));
       } else if (message.type === "state" && message.state?._sourceId !== this.clientId) {
         this.emit("state", message.state);
       }

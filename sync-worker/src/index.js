@@ -9,7 +9,7 @@ const ALLOWED_ORIGINS = new Set([
 ]);
 const ROOM_PATTERN = /^[a-z0-9][a-z0-9_-]{7,79}$/i;
 const TOKEN_PATTERN = /^[a-f0-9]{20,64}$/i;
-const VIEWS = new Set(["home", "library", "favorites", "share", "system"]);
+const VIEWS = new Set(["home", "library", "favorites", "system"]);
 const GAME_IDS = new Set(["soccar", "prison-escape-lnj", "super-star-car", "riders-downhill-racing", "skillwarz", "buildnow-gg", "nzp"]);
 const MAX_VIEWERS = 100;
 const MAX_MESSAGE_BYTES = 4096;
@@ -85,7 +85,6 @@ export class ConsoleRoom extends DurableObject {
     const sockets = openSockets(this.ctx);
     const host = this.hostSocket();
     sockets.forEach((socket) => {
-      this.safeSend(socket, { type: "viewers", count: sockets.length });
       this.safeSend(socket, { type: "role", host: socket === host, state: this.lastState });
     });
   }

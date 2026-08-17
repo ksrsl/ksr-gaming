@@ -1,4 +1,4 @@
-// KSR Gaming - Second Life Media-on-a-Prim Controller v0.3
+// KSR Gaming - Second Life Media-on-a-Prim Controller v0.4
 // Drop this script into the console's root prim and compile it in Mono.
 
 string SITE_URL = "https://ksrsl.github.io/ksr-gaming/";
@@ -9,18 +9,92 @@ string POWER_LINK_NAME = "POWER";
 string HOME_LINK_NAME = "HOME";
 integer SCREEN_FACE = 0;
 integer OWNER_ONLY_POWER = FALSE;
+integer AUTO_RESOLUTION = TRUE;
+integer SCREEN_WIDTH_AXIS = 0;  // 0 = X, 1 = Y, 2 = Z
+integer SCREEN_HEIGHT_AXIS = 2; // Flat screen default: X wide, Z tall
+integer MAX_MEDIA_PIXELS = 2048;
+integer MIN_MEDIA_PIXELS = 256;
 
 integer gScreenLink = 0;
 integer gPowerLink = 0;
 integer gHomeLink = 0;
 integer gPowered = FALSE;
 string gRoomToken = "";
+integer gMediaWidth = 2048;
+integer gMediaHeight = 1152;
 
 ensureRoomToken()
 {
     if (gRoomToken == "")
     {
         gRoomToken = llSHA1String((string)llGenerateKey() + (string)llGetUnixTime() + (string)llGetOwner());
+    }
+}
+
+float axisSize(vector size, integer axis)
+{
+    if (axis == 1) return size.y;
+    if (axis == 2) return size.z;
+    return size.x;
+}
+
+integer clampPixels(integer pixels)
+{
+    if (pixels < MIN_MEDIA_PIXELS) return MIN_MEDIA_PIXELS;
+    if (pixels > MAX_MEDIA_PIXELS) return MAX_MEDIA_PIXELS;
+    return pixels;
+}
+
+list adaptedResolution()
+{
+    if (!AUTO_RESOLUTION || !gScreenLink)
+    {
+        return [2048, 1152];
+    }
+
+    vector size = llList2Vector(llGetLinkPrimitiveParams(gScreenLink, [PRIM_SIZE]), 0);
+    float physicalWidth = axisSize(size, SCREEN_WIDTH_AXIS);
+    float physicalHeight = axisSize(size, SCREEN_HEIGHT_AXIS);
+    if (physicalWidth <= 0.001 || physicalHeight <= 0.001)
+    {
+        return [2048, 1152];
+    }
+
+    float ratio = physicalWidth / physicalHeight;
+    integer width;
+    integer height;
+    if (ratio >= 1.0)
+    {
+        width = MAX_MEDIA_PIXELS;
+        height = clampPixels(llRound((float)MAX_MEDIA_PIXELS / ratio));
+    }
+    else
+    {
+        height = MAX_MEDIA_PIXELS;
+        width = clampPixels(llRound((float)MAX_MEDIA_PIXELS * ratio));
+    }
+    return [width, height];
+}
+
+updateMediaResolution()
+{
+    if (!gScreenLink) return;
+    list resolution = adaptedResolution();
+    integer width = llList2Integer(resolution, 0);
+    integer height = llList2Integer(resolution, 1);
+    if (width == gMediaWidth && height == gMediaHeight) return;
+
+    gMediaWidth = width;
+    gMediaHeight = height;
+    if (gPowered)
+    {
+        llSetLinkMedia(gScreenLink, SCREEN_FACE,
+        [
+            PRIM_MEDIA_WIDTH_PIXELS, gMediaWidth,
+            PRIM_MEDIA_HEIGHT_PIXELS, gMediaHeight,
+            PRIM_MEDIA_AUTO_SCALE, TRUE,
+            PRIM_MEDIA_FIRST_CLICK_INTERACT, TRUE
+        ]);
     }
 }
 
@@ -71,6 +145,7 @@ setScreenColor(vector color)
 powerOff()
 {
     gPowered = FALSE;
+    llSetTimerEvent(0.0);
     if (gScreenLink)
     {
         llClearLinkMedia(gScreenLink, SCREEN_FACE);
@@ -92,12 +167,15 @@ powerOn()
     }
 
     string url = launchUrl(FALSE);
+    list resolution = adaptedResolution();
+    gMediaWidth = llList2Integer(resolution, 0);
+    gMediaHeight = llList2Integer(resolution, 1);
     setScreenColor(<1.0, 1.0, 1.0>);
 
     integer status = llSetLinkMedia(gScreenLink, SCREEN_FACE,
     [
         PRIM_MEDIA_ALT_IMAGE_ENABLE, TRUE,
-        PRIM_MEDIA_CONTROLS, PRIM_MEDIA_CONTROLS_MINI,
+        PRIM_MEDIA_CONTROLS, PRIM_MEDIA_CONTROLS_NONE,
         PRIM_MEDIA_CURRENT_URL, url,
         PRIM_MEDIA_HOME_URL, url,
         PRIM_MEDIA_AUTO_LOOP, FALSE,
@@ -105,8 +183,8 @@ powerOn()
         PRIM_MEDIA_AUTO_SCALE, TRUE,
         PRIM_MEDIA_AUTO_ZOOM, FALSE,
         PRIM_MEDIA_FIRST_CLICK_INTERACT, TRUE,
-        PRIM_MEDIA_WIDTH_PIXELS, 2048,
-        PRIM_MEDIA_HEIGHT_PIXELS, 1152,
+        PRIM_MEDIA_WIDTH_PIXELS, gMediaWidth,
+        PRIM_MEDIA_HEIGHT_PIXELS, gMediaHeight,
         PRIM_MEDIA_WHITELIST_ENABLE, FALSE,
         PRIM_MEDIA_PERMS_INTERACT, PRIM_MEDIA_PERM_ANYONE,
         PRIM_MEDIA_PERMS_CONTROL, PRIM_MEDIA_PERM_NONE
@@ -115,6 +193,7 @@ powerOn()
     if (status == STATUS_OK)
     {
         gPowered = TRUE;
+        llSetTimerEvent(2.0);
     }
     else
     {
@@ -132,6 +211,7 @@ goHome()
     }
 
     string url = launchUrl(TRUE);
+    updateMediaResolution();
     llSetLinkMedia(gScreenLink, SCREEN_FACE,
     [
         PRIM_MEDIA_CURRENT_URL, url,
@@ -167,10 +247,24 @@ default
 
     changed(integer change)
     {
-        if (change & (CHANGED_LINK | CHANGED_OWNER))
+        if (change & CHANGED_OWNER)
         {
             llResetScript();
         }
+        else if (change & CHANGED_LINK)
+        {
+            refreshLinks();
+            updateMediaResolution();
+        }
+        else if (change & CHANGED_SCALE)
+        {
+            updateMediaResolution();
+        }
+    }
+
+    timer()
+    {
+        updateMediaResolution();
     }
 
     touch_start(integer totalNumber)
@@ -181,7 +275,11 @@ default
             key toucher = llDetectedKey(detected);
             integer touchedLink = llDetectedLinkNumber(detected);
 
-            if (touchedLink == gHomeLink && gHomeLink)
+            if (touchedLink == gScreenLink && gScreenLink)
+            {
+                updateMediaResolution();
+            }
+            else if (touchedLink == gHomeLink && gHomeLink)
             {
                 goHome();
             }

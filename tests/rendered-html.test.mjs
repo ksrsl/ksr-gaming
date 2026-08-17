@@ -74,7 +74,8 @@ test("ships isolated shared-console infrastructure", async () => {
   assert.match(controller, /token=/);
   assert.match(controller, /AUTO_RESOLUTION = TRUE/);
   assert.match(controller, /MAX_MEDIA_PIXELS = 2048/);
-  assert.match(controller, /PRIM_MEDIA_CONTROLS_NONE/);
+  assert.match(controller, /PRIM_MEDIA_CONTROLS_MINI/);
+  assert.doesNotMatch(controller, /PRIM_MEDIA_CONTROLS_NONE/);
   assert.match(controller, /PRIM_MEDIA_FIRST_CLICK_INTERACT, TRUE/);
   assert.match(controller, /llSetTimerEvent\(2\.0\)/);
   assert.match(client, /class ConsoleSync/);

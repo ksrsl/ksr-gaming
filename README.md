@@ -40,9 +40,9 @@ The controller automatically reads the physical `SCREEN` prim proportions and up
 ## Viewer use
 
 - Shared Media / Media-on-a-Prim must be enabled in the viewer.
-- Touch the display once to focus keyboard, mouse, and gamepad input. The media face uses direct first-click interaction, hides the viewer media bar, and the launcher re-focuses the active game frame after launch, reload, pointer entry, and pointer press.
+- Touch the display once to focus keyboard, mouse, and gamepad input. The media face uses direct first-click interaction, keeps viewer controls in minimal mode, and the launcher re-focuses the active game frame after launch, reload, pointer entry, and pointer press.
 - The screen can use any landscape or portrait proportion. The automatic adapter keeps the page native to the physical face instead of stretching a fixed 16:9 render.
-- The controller permits anyone to interact with the media. Viewer media-bar controls are hidden so they do not steal the first game click.
+- The controller permits anyone to interact with the media and uses Second Life's minimal media controls.
 - Set `OWNER_ONLY_POWER = TRUE` if only the owner should control power.
 - Controller v0.4 creates a private synchronization room for each rezzed console. The first connected media surface becomes host; other viewers silently follow its dashboard navigation, selected game, launch, and exit state. No synchronization labels or counts are shown on the console.
 - Third-party game code runs inside a protected iframe, so KSR can synchronize the console session around it but cannot read or duplicate the game's private internal save/state.

@@ -45,7 +45,8 @@ const host = await connect();
 await waitFor(host.messages, (message) => message.type === "welcome" && message.host === true);
 const viewer = await connect();
 await waitFor(viewer.messages, (message) => message.type === "role" && message.host === false);
-await waitFor(host.messages, (message) => message.type === "viewers" && message.count === 2);
+assert.equal(host.messages.some((message) => message.type === "viewers"), false);
+assert.equal(viewer.messages.some((message) => message.type === "viewers"), false);
 
 const state = { view: "home", selectedId: "super-star-car", playingId: "super-star-car", _sourceId: "relay-test" };
 host.socket.send(JSON.stringify({ type: "state", state }));
@@ -54,4 +55,4 @@ assert.deepEqual(relayed.state, state);
 
 host.socket.close(1000, "Test complete");
 viewer.socket.close(1000, "Test complete");
-console.log("KSR Gaming relay health, presence, host authority, and shared state passed.");
+console.log("KSR Gaming relay health, silent host authority, and shared state passed.");

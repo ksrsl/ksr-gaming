@@ -46,3 +46,14 @@ test("ships the seven approved catalog entries", async () => {
     assert.match(source, new RegExp(title.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
   }
 });
+
+test("requires a player identity and presents games as a full-screen console session", async () => {
+  const source = await readFile(new URL("../app/KSRGaming.tsx", import.meta.url), "utf8");
+  const styles = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+
+  assert.match(source, /CHOOSE YOUR/);
+  assert.match(source, /ksr-gaming-username/);
+  assert.match(source, /EXIT TO CONSOLE/);
+  assert.match(styles, /\.frame-stage\s*\{[^}]*inset:0;/);
+  assert.match(styles, /\.game-hud\s*\{[^}]*opacity:0;/);
+});

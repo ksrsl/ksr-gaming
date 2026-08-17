@@ -1,7 +1,7 @@
 "use client";
 /* eslint-disable @next/next/no-img-element */
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 
 type Game = {
   id: string;
@@ -142,6 +142,11 @@ export default function KSRGaming() {
   const [query, setQuery] = useState("");
   const [favorites, setFavorites] = useState<string[]>([]);
   const [recent, setRecent] = useState<string[]>([]);
+  const [username, setUsername] = useState("");
+  const [profileDraft, setProfileDraft] = useState("");
+  const [profileLoaded, setProfileLoaded] = useState(false);
+  const [profileError, setProfileError] = useState("");
+  const profileInputRef = useRef<HTMLInputElement>(null);
   const clock = useClock();
 
   useEffect(() => {
@@ -150,6 +155,12 @@ export default function KSRGaming() {
     const savedStateTimer = window.setTimeout(() => {
       setFavorites(readSavedIds("ksr-gaming-favorites"));
       setRecent(readSavedIds("ksr-gaming-recent"));
+      const savedUsername = window.localStorage.getItem("ksr-gaming-username")?.trim() ?? "";
+      if (/^[A-Za-z0-9_]{3,24}$/.test(savedUsername)) {
+        setUsername(savedUsername);
+        setProfileDraft(savedUsername);
+      }
+      setProfileLoaded(true);
     }, 0);
     const timers = skip
       ? [window.setTimeout(() => setBooting(false), 50)]
@@ -176,6 +187,10 @@ export default function KSRGaming() {
     return () => window.removeEventListener("keydown", onKey);
   }, [playingId]);
 
+  useEffect(() => {
+    if (!booting && profileLoaded && !username) profileInputRef.current?.focus();
+  }, [booting, profileLoaded, username]);
+
   const selected = games.find((game) => game.id === selectedId) ?? games[0];
   const playing = games.find((game) => game.id === playingId) ?? null;
   const visibleGames = useMemo(() => {
@@ -186,6 +201,7 @@ export default function KSRGaming() {
   }, [query, view, favorites]);
 
   const launch = (game: Game) => {
+    if (!username) return;
     setSelectedId(game.id);
     setPlayingId(game.id);
     setFrameKey((value) => value + 1);
@@ -215,6 +231,19 @@ export default function KSRGaming() {
     setQuery("");
   };
 
+  const saveProfile = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const nextUsername = profileDraft.trim();
+    if (!/^[A-Za-z0-9_]{3,24}$/.test(nextUsername)) {
+      setProfileError("USE 3-24 LETTERS, NUMBERS OR UNDERSCORES");
+      return;
+    }
+    window.localStorage.setItem("ksr-gaming-username", nextUsername);
+    setUsername(nextUsername);
+    setProfileDraft(nextUsername);
+    setProfileError("");
+  };
+
   return (
     <main className="station-shell">
       <div className="ambient ambient-one" />
@@ -242,20 +271,49 @@ export default function KSRGaming() {
         </section>
       )}
 
+      {!booting && profileLoaded && !username && (
+        <section className="profile-screen" aria-label="Create KSR Gaming player profile">
+          <div className="profile-grid" />
+          <div className="profile-scan" />
+          <form className="profile-panel" onSubmit={saveProfile}>
+            <span className="profile-kicker">KSR PLAYER NETWORK // FIRST ACCESS</span>
+            <div className="profile-badge">01</div>
+            <h2>CHOOSE YOUR<br />USERNAME</h2>
+            <p>This name identifies your KSR Gaming profile on this console.</p>
+            <label className={profileError ? "profile-input error" : "profile-input"}>
+              <span>PLAYER_</span>
+              <input
+                value={profileDraft}
+                ref={profileInputRef}
+                onChange={(event) => { setProfileDraft(event.target.value); setProfileError(""); }}
+                placeholder="USERNAME"
+                aria-label="KSR Gaming username"
+                autoComplete="off"
+                autoCapitalize="off"
+                spellCheck={false}
+                maxLength={24}
+              />
+              <i>{String(profileDraft.length).padStart(2, "0")}/24</i>
+            </label>
+            <div className="profile-error">{profileError || "LETTERS // NUMBERS // UNDERSCORES"}</div>
+            <button className="profile-confirm" type="submit">INITIALIZE PLAYER <span>→</span></button>
+          </form>
+        </section>
+      )}
+
       {playing ? (
         <section className="player-shell">
-          <header className="player-bar">
-            <div className="player-identity">
-              <button className="exit-game" onClick={() => setPlayingId(null)} aria-label="Exit game">←</button>
-              <img src={playing.cover} alt="" />
-              <div><small>NOW PLAYING</small><strong>{playing.name}</strong></div>
+          <div className="game-hud" aria-label="KSR game controls">
+            <div className="game-hud-identity">
+              <span>KSR // {username.toUpperCase()}</span>
+              <strong>{playing.name}</strong>
             </div>
-            <div className="player-controls">
-              <span>{playing.controls}</span>
+            <div className="game-hud-controls">
               <button onClick={() => setFrameKey((value) => value + 1)}>RELOAD</button>
-              <button className="player-exit" onClick={() => setPlayingId(null)}>EXIT GAME</button>
+              <button className="game-hud-exit" onClick={() => setPlayingId(null)}>EXIT TO CONSOLE</button>
             </div>
-          </header>
+          </div>
+          <div className="game-hint">MOVE CURSOR TO TOP FOR CONSOLE CONTROLS</div>
           <div className="frame-stage">
             <div className="frame-loader"><span /><p>OPENING {playing.name.toUpperCase()}</p></div>
             <iframe
@@ -279,7 +337,7 @@ export default function KSRGaming() {
               <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="SEARCH CATALOG" aria-label="Search games" />
               <kbd>/</kbd>
             </label>
-            <div className="top-status"><span className="status-dot" /> SYSTEM ONLINE <b>{clock}</b><button onClick={powerCycle} title="Replay power-on sequence">⏻</button></div>
+            <div className="top-status"><span className="status-dot" /> PLAYER {username.toUpperCase()} <b>{clock}</b><button onClick={powerCycle} title="Replay power-on sequence">⏻</button></div>
           </header>
 
           <aside className="nav-rail">
@@ -335,6 +393,7 @@ export default function KSRGaming() {
                 <div className="system-grid">
                   <div className="system-card accent"><small>CORE STATUS</small><strong>ONLINE</strong><p>All {games.length} authorized game channels are loaded into the catalog.</p><i /></div>
                   <div className="system-card"><small>DISPLAY PROFILE</small><strong>2048 × 2048</strong><p>Ultra-resolution square Media-on-a-Prim profile.</p></div>
+                  <div className="system-card"><small>PLAYER PROFILE</small><strong>{username.toUpperCase()}</strong><p>Active console identity stored for this viewer.</p></div>
                   <div className="system-card"><small>LOCAL COLLECTION</small><strong>{favorites.length} FAVORITES</strong><p>{recent.length ? `Recently played: ${recent.map((id) => games.find((game) => game.id === id)?.name).filter(Boolean).join(", ")}` : "No recent sessions on this viewer."}</p></div>
                   <div className="system-card power-card"><small>POWER SEQUENCE</small><strong>REPLAY STARTUP</strong><p>Run the complete KSR Gaming boot sequence again.</p><button onClick={powerCycle}>POWER CYCLE <span>⏻</span></button></div>
                 </div>

@@ -39,7 +39,7 @@ If the model uses different link names, change the three link-name settings at t
 
 - Shared Media / Media-on-a-Prim must be enabled in the viewer.
 - Click the display once so keyboard, mouse, and gamepad input are focused inside the game.
-- Use a square screen face. The launcher and controller are configured for the maximum 2048 × 2048 Media-on-a-Prim profile.
+- Use a widescreen 16:9 screen face. The launcher and controller are configured for a native 2048 × 1152 Media-on-a-Prim profile so games keep their natural proportions.
 - The controller permits anyone to interact with the media while keeping media-bar controls owner-only.
 - Set `OWNER_ONLY_POWER = TRUE` if only the owner should control power.
 

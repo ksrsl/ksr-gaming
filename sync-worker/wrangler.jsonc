@@ -1,0 +1,15 @@
+{
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  "name": "ksr-gaming-sync",
+  "main": "src/index.js",
+  "compatibility_date": "2026-08-17",
+  "durable_objects": {
+    "bindings": [
+      { "name": "ROOMS", "class_name": "ConsoleRoom" }
+    ]
+  },
+  "migrations": [
+    { "tag": "v1", "new_sqlite_classes": ["ConsoleRoom"] }
+  ],
+  "observability": { "enabled": true }
+}

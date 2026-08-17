@@ -42,6 +42,8 @@ If the model uses different link names, change the three link-name settings at t
 - Use a widescreen 16:9 screen face. The launcher and controller are configured for a native 2048 × 1152 Media-on-a-Prim profile so games keep their natural proportions.
 - The controller permits anyone to interact with the media while keeping media-bar controls owner-only.
 - Set `OWNER_ONLY_POWER = TRUE` if only the owner should control power.
+- Controller v0.3 creates a private screen-share room for each rezzed console. The first connected media surface becomes host; other viewers follow its dashboard navigation, selected game, launch, and exit state through the isolated KSR Gaming relay.
+- Third-party game code runs inside a protected iframe, so KSR can synchronize the console session around it but cannot read or duplicate the game's private internal save/state.
 
 ## Local preview
 

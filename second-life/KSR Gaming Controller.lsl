@@ -1,7 +1,8 @@
-// KSR Gaming - Second Life Media-on-a-Prim Controller v0.2
+// KSR Gaming - Second Life Media-on-a-Prim Controller v0.3
 // Drop this script into the console's root prim and compile it in Mono.
 
 string SITE_URL = "https://ksrsl.github.io/ksr-gaming/";
+string SYNC_URL = "https://ksr-gaming-sync.ksr-hstn-ai-9ca1.workers.dev";
 
 string SCREEN_LINK_NAME = "SCREEN";
 string POWER_LINK_NAME = "POWER";
@@ -13,6 +14,15 @@ integer gScreenLink = 0;
 integer gPowerLink = 0;
 integer gHomeLink = 0;
 integer gPowered = FALSE;
+string gRoomToken = "";
+
+ensureRoomToken()
+{
+    if (gRoomToken == "")
+    {
+        gRoomToken = llSHA1String((string)llGenerateKey() + (string)llGetUnixTime() + (string)llGetOwner());
+    }
+}
 
 integer findLink(string wanted)
 {
@@ -30,6 +40,7 @@ integer findLink(string wanted)
 
 string launchUrl(integer skipBoot)
 {
+    ensureRoomToken();
     string separator = "?";
     if (llSubStringIndex(SITE_URL, "?") != -1)
     {
@@ -38,7 +49,10 @@ string launchUrl(integer skipBoot)
 
     return SITE_URL + separator
         + "sl=1&skipBoot=" + (string)skipBoot
-        + "&session=" + (string)llGetUnixTime();
+        + "&session=" + (string)llGetUnixTime()
+        + "&sync=" + llEscapeURL(SYNC_URL)
+        + "&room=" + (string)llGetKey()
+        + "&token=" + gRoomToken;
 }
 
 integer urlConfigured()
@@ -141,6 +155,7 @@ default
 {
     state_entry()
     {
+        ensureRoomToken();
         refreshLinks();
         powerOff();
     }

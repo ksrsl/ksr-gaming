@@ -2,6 +2,7 @@
 /* eslint-disable @next/next/no-img-element */
 
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
+import { ConsoleSync, type ConsoleView, type SharedConsoleState } from "./console-sync";
 
 type Game = {
   id: string;
@@ -103,7 +104,16 @@ const games: Game[] = [
   },
 ];
 
-type View = "home" | "library" | "favorites" | "system";
+type View = ConsoleView;
+
+type ShareState = {
+  enabled: boolean;
+  connected: boolean;
+  isHost: boolean;
+  viewers: number;
+  room: string;
+  label: string;
+};
 
 const bootMessages = [
   "WAKING DISPLAY CORE",
@@ -147,6 +157,9 @@ export default function KSRGaming() {
   const [profileLoaded, setProfileLoaded] = useState(false);
   const [profileError, setProfileError] = useState("");
   const profileInputRef = useRef<HTMLInputElement>(null);
+  const syncRef = useRef<ConsoleSync | null>(null);
+  const applyingRemoteRef = useRef(false);
+  const [share, setShare] = useState<ShareState>({ enabled: false, connected: false, isHost: true, viewers: 1, room: "LOCAL", label: "LOCAL" });
   const clock = useClock();
 
   useEffect(() => {
@@ -177,6 +190,52 @@ export default function KSRGaming() {
   }, []);
 
   useEffect(() => {
+    const sync = ConsoleSync.fromLocation(window.location);
+    syncRef.current = sync;
+    const setupTimer = window.setTimeout(() => {
+      setShare((current) => ({ ...current, enabled: sync.enabled, isHost: !sync.enabled, room: sync.room || "LOCAL", label: sync.enabled ? "CONNECTING" : "LOCAL" }));
+    }, 0);
+    if (!sync.enabled) return () => window.clearTimeout(setupTimer);
+
+    const removeStatus = sync.on("status", (payload) => {
+      const status = payload as { connected: boolean; label: string };
+      setShare((current) => ({ ...current, connected: status.connected, label: status.label }));
+    });
+    const removeRole = sync.on("role", (payload) => {
+      const role = payload as { host: boolean };
+      setShare((current) => ({ ...current, isHost: role.host }));
+    });
+    const removeViewers = sync.on("viewers", (payload) => {
+      setShare((current) => ({ ...current, viewers: Number(payload) || 1 }));
+    });
+    const removeState = sync.on("state", (payload) => {
+      const state = payload as SharedConsoleState | undefined;
+      if (!state || !games.some((game) => game.id === state.selectedId)) return;
+      applyingRemoteRef.current = true;
+      setQuery("");
+      setSelectedId(state.selectedId);
+      setView(["home", "library", "favorites", "share", "system"].includes(state.view) ? state.view : "home");
+      setPlayingId(state.playingId && games.some((game) => game.id === state.playingId) ? state.playingId : null);
+      window.setTimeout(() => { applyingRemoteRef.current = false; }, 0);
+    });
+    sync.connect();
+    return () => {
+      removeStatus?.();
+      removeRole?.();
+      removeViewers?.();
+      removeState?.();
+      window.clearTimeout(setupTimer);
+      sync.close();
+    };
+  }, []);
+
+  useEffect(() => {
+    const sync = syncRef.current;
+    if (!sync?.enabled || !share.connected || !share.isHost || applyingRemoteRef.current) return;
+    sync.publish({ view, selectedId, playingId });
+  }, [view, selectedId, playingId, share.connected, share.isHost]);
+
+  useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
       if (event.key === "Escape" && playingId) {
         event.preventDefault();
@@ -201,7 +260,7 @@ export default function KSRGaming() {
   }, [query, view, favorites]);
 
   const launch = (game: Game) => {
-    if (!username) return;
+    if (!username || (share.enabled && !share.isHost)) return;
     setSelectedId(game.id);
     setPlayingId(game.id);
     setFrameKey((value) => value + 1);
@@ -216,7 +275,13 @@ export default function KSRGaming() {
     window.localStorage.setItem("ksr-gaming-favorites", JSON.stringify(next));
   };
 
+  const selectGame = (gameId: string) => {
+    if (share.enabled && !share.isHost) return;
+    setSelectedId(gameId);
+  };
+
   const powerCycle = () => {
+    if (share.enabled && !share.isHost) return;
     setPlayingId(null);
     setBootMessage(0);
     setBooting(true);
@@ -227,8 +292,14 @@ export default function KSRGaming() {
   };
 
   const changeView = (next: View) => {
+    if (share.enabled && !share.isHost) return;
     setView(next);
     setQuery("");
+  };
+
+  const exitGame = () => {
+    if (share.enabled && !share.isHost) return;
+    setPlayingId(null);
   };
 
   const saveProfile = (event: FormEvent<HTMLFormElement>) => {
@@ -310,7 +381,8 @@ export default function KSRGaming() {
             </div>
             <div className="game-hud-controls">
               <button onClick={() => setFrameKey((value) => value + 1)}>RELOAD</button>
-              <button className="game-hud-exit" onClick={() => setPlayingId(null)}>EXIT TO CONSOLE</button>
+              <span className={`share-chip ${share.connected ? "live" : ""}`}>{share.enabled ? `${share.viewers} SCREEN${share.viewers === 1 ? "" : "S"} // ${share.isHost ? "HOST" : "VIEW"}` : "LOCAL PLAY"}</span>
+              <button className="game-hud-exit" onClick={exitGame} disabled={share.enabled && !share.isHost}>EXIT TO CONSOLE</button>
             </div>
           </div>
           <div className="frame-stage">
@@ -333,18 +405,19 @@ export default function KSRGaming() {
             </button>
             <label className="search-box">
               <span>⌕</span>
-              <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="SEARCH CATALOG" aria-label="Search games" />
+              <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="SEARCH CATALOG" aria-label="Search games" disabled={share.enabled && !share.isHost} />
               <kbd>/</kbd>
             </label>
-            <div className="top-status"><span className="status-dot" /> PLAYER {username.toUpperCase()} <b>{clock}</b><button onClick={powerCycle} title="Replay power-on sequence">⏻</button></div>
+            <div className="top-status"><span className={`status-dot ${share.connected ? "shared" : ""}`} /><span>{share.enabled ? `${share.viewers} CONNECTED` : `PLAYER ${username.toUpperCase()}`}</span><b>{clock}</b><button onClick={powerCycle} title="Replay power-on sequence" disabled={share.enabled && !share.isHost}>⏻</button></div>
           </header>
 
           <aside className="nav-rail">
-            <button className={`nav-item ${view === "home" ? "active" : ""}`} onClick={() => changeView("home")}><span>01</span>Home</button>
-            <button className={`nav-item ${view === "library" ? "active" : ""}`} onClick={() => changeView("library")}><span>02</span>Library</button>
-            <button className={`nav-item ${view === "favorites" ? "active" : ""}`} onClick={() => changeView("favorites")}><span>03</span>Favorites<b>{favorites.length}</b></button>
-            <button className={`nav-item ${view === "system" ? "active" : ""}`} onClick={() => changeView("system")}><span>04</span>System</button>
-            <div className="rail-footer"><span>MEDIA CORE</span><strong>v0.2</strong><i /></div>
+            <button className={`nav-item ${view === "home" ? "active" : ""}`} onClick={() => changeView("home")} disabled={share.enabled && !share.isHost}><span className="nav-icon">⌂</span><small>Home</small></button>
+            <button className={`nav-item ${view === "library" ? "active" : ""}`} onClick={() => changeView("library")} disabled={share.enabled && !share.isHost}><span className="nav-icon">▦</span><small>Library</small></button>
+            <button className={`nav-item ${view === "favorites" ? "active" : ""}`} onClick={() => changeView("favorites")} disabled={share.enabled && !share.isHost}><span className="nav-icon">♡</span><small>Favorites</small><b>{favorites.length}</b></button>
+            <button className={`nav-item ${view === "share" ? "active" : ""}`} onClick={() => changeView("share")} disabled={share.enabled && !share.isHost}><span className="nav-icon">◉</span><small>Screen Share</small></button>
+            <button className={`nav-item ${view === "system" ? "active" : ""}`} onClick={() => changeView("system")} disabled={share.enabled && !share.isHost}><span className="nav-icon">⚙</span><small>System</small></button>
+            <div className="rail-footer"><span>MEDIA CORE</span><strong>v0.3</strong><i /></div>
           </aside>
 
           <section className="dashboard">
@@ -363,11 +436,11 @@ export default function KSRGaming() {
                     </div>
                   </div>
                   <div className="hero-index">{String(games.findIndex((game) => game.id === selected.id) + 1).padStart(2, "0")} / {String(games.length).padStart(2, "0")}</div>
-                  <div className="hero-pips">{games.map((game) => <button key={game.id} className={game.id === selected.id ? "active" : ""} onClick={() => setSelectedId(game.id)} aria-label={`Feature ${game.name}`} />)}</div>
+                  <div className="hero-pips">{games.map((game) => <button key={game.id} className={game.id === selected.id ? "active" : ""} onClick={() => selectGame(game.id)} aria-label={`Feature ${game.name}`} disabled={share.enabled && !share.isHost} />)}</div>
                 </div>
 
                 <div className="section-heading"><div><span>AUTHORIZED CATALOG</span><h3>Ready to play</h3></div><button onClick={() => changeView("library")}>VIEW ALL <b>→</b></button></div>
-                <GameGrid entries={games.slice(0, 4)} selectedId={selectedId} favorites={favorites} onSelect={setSelectedId} onLaunch={launch} onFavorite={toggleFavorite} compact />
+                <GameGrid entries={games.slice(0, 4)} selectedId={selectedId} favorites={favorites} onSelect={selectGame} onLaunch={launch} onFavorite={toggleFavorite} compact />
               </>
             )}
 
@@ -379,7 +452,7 @@ export default function KSRGaming() {
                   <p>{visibleGames.length} {visibleGames.length === 1 ? "title" : "titles"} available</p>
                 </div>
                 {visibleGames.length ? (
-                  <GameGrid entries={visibleGames} selectedId={selectedId} favorites={favorites} onSelect={setSelectedId} onLaunch={launch} onFavorite={toggleFavorite} />
+                  <GameGrid entries={visibleGames} selectedId={selectedId} favorites={favorites} onSelect={selectGame} onLaunch={launch} onFavorite={toggleFavorite} />
                 ) : (
                   <div className="empty-state"><b>NO SIGNAL</b><p>No matching games found in this collection.</p><button onClick={() => { setQuery(""); setView("library"); }}>RETURN TO LIBRARY</button></div>
                 )}
@@ -395,6 +468,26 @@ export default function KSRGaming() {
                   <div className="system-card"><small>PLAYER PROFILE</small><strong>{username.toUpperCase()}</strong><p>Active console identity stored for this viewer.</p></div>
                   <div className="system-card"><small>LOCAL COLLECTION</small><strong>{favorites.length} FAVORITES</strong><p>{recent.length ? `Recently played: ${recent.map((id) => games.find((game) => game.id === id)?.name).filter(Boolean).join(", ")}` : "No recent sessions on this viewer."}</p></div>
                   <div className="system-card power-card"><small>POWER SEQUENCE</small><strong>REPLAY STARTUP</strong><p>Run the complete KSR Gaming boot sequence again.</p><button onClick={powerCycle}>POWER CYCLE <span>⏻</span></button></div>
+                </div>
+              </div>
+            )}
+
+            {view === "share" && !query && (
+              <div className="share-view">
+                <div className="catalog-heading"><span>KSR LIVE LINK</span><h2>Screen Share</h2><p>One console. Every nearby viewer.</p></div>
+                <div className="share-stage">
+                  <div className="share-rings"><i /><i /><i /></div>
+                  <div className="share-symbol"><span>◉</span><b>{share.connected ? "LIVE" : share.enabled ? share.label : "READY"}</b></div>
+                  <div className="share-copy">
+                    <span>{share.enabled ? "SHARED CONSOLE SESSION" : "SCREEN LINK STANDBY"}</span>
+                    <h3>{share.enabled ? `${share.viewers} DISPLAY${share.viewers === 1 ? "" : "S"} CONNECTED` : "POWER ON FROM SECOND LIFE"}</h3>
+                    <p>{share.enabled ? "The host controls the KSR dashboard, selected title, launch and exit state. Every connected media surface follows the same console session." : "The Second Life controller automatically opens a private room when the console powers on."}</p>
+                  </div>
+                  <div className="share-metrics">
+                    <div><small>ROLE</small><strong>{share.enabled ? (share.isHost ? "HOST" : "VIEWER") : "LOCAL"}</strong></div>
+                    <div><small>ROOM</small><strong>{share.room === "LOCAL" ? "—" : share.room.slice(-8).toUpperCase()}</strong></div>
+                    <div><small>LINK</small><strong>{share.connected ? "SECURE" : "STANDBY"}</strong></div>
+                  </div>
                 </div>
               </div>
             )}

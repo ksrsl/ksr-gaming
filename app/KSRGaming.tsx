@@ -313,7 +313,6 @@ export default function KSRGaming() {
               <button className="game-hud-exit" onClick={() => setPlayingId(null)}>EXIT TO CONSOLE</button>
             </div>
           </div>
-          <div className="game-hint">MOVE CURSOR TO TOP FOR CONSOLE CONTROLS</div>
           <div className="frame-stage">
             <div className="frame-loader"><span /><p>OPENING {playing.name.toUpperCase()}</p></div>
             <iframe

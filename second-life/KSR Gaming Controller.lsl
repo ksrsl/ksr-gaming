@@ -1,4 +1,4 @@
-// KSR Gaming - Second Life Media-on-a-Prim Controller v0.5.0
+// KSR Gaming - Second Life Media-on-a-Prim Controller v0.6.0
 // Drop this script into the console's root prim and compile it in Mono.
 
 string SITE_URL = "https://ksrsl.github.io/ksr-gaming/";

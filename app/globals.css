@@ -101,18 +101,19 @@ button { border:0; }
 .setting-card.power button { position:absolute; right:20px; bottom:18px; height:34px; padding:0 14px; border-radius:99px; color:#071020; background:#fff; font-size:8px; font-weight:800; cursor:pointer; }
 
 /* Games run edge-to-edge; controls float over the game instead of changing its aspect ratio. */
-.player-shell,.frame-stage { position:absolute; inset:0; overflow:hidden; background:#000; }
+.player-shell { position:absolute; inset:0; overflow:hidden; background:#000; }
+.frame-stage { position:absolute; inset:56px 0 0; overflow:hidden; background:#000; }
 .frame-stage iframe { position:absolute; z-index:1; inset:0; width:100%; height:100%; border:0; background:#000; }
 .frame-loader { position:absolute; inset:0; display:grid; place-items:center; align-content:center; gap:13px; color:#8190a7; background:#02050c; }
 .frame-loader span { width:48px; height:48px; border:2px solid rgba(255,255,255,.16); border-top-color:#5fa3ff; border-radius:50%; animation:spin 1s linear infinite; }
 .frame-loader p { font:8px monospace; letter-spacing:.18em; }
-.game-hud { position:absolute; z-index:5; top:16px; left:18px; right:18px; height:46px; display:flex; align-items:center; justify-content:space-between; pointer-events:none; }
-.game-hud-identity,.game-hud-controls { display:flex; align-items:center; gap:8px; pointer-events:auto; }
-.game-hud-identity { height:42px; padding:0 15px 0 6px; border:1px solid rgba(255,255,255,.13); border-radius:99px; background:rgba(0,5,14,.73); backdrop-filter:blur(18px); }
+.game-hud { position:absolute; z-index:5; top:0; left:0; right:0; height:56px; padding:0 18px; display:flex; align-items:center; justify-content:space-between; background:linear-gradient(180deg,#050b17,#020711); border-bottom:1px solid rgba(135,188,255,.18); box-shadow:0 10px 24px rgba(0,0,0,.28); }
+.game-hud-identity,.game-hud-controls { display:flex; align-items:center; gap:8px; }
+.game-hud-identity { height:42px; padding:0 15px 0 6px; border-radius:99px; }
 .game-hud-identity span { display:grid; place-items:center; width:30px; height:30px; border-radius:50%; background:#2f7cff; font-weight:900; }
 .game-hud-identity span img { width:23px; height:auto; }
 .game-hud-identity strong { font-size:11px; text-transform:uppercase; }
-.game-hud-controls button { height:40px; padding:0 16px; border:1px solid rgba(255,255,255,.13); border-radius:99px; color:#fff; background:rgba(0,5,14,.73); font-size:8px; font-weight:800; letter-spacing:.09em; cursor:pointer; backdrop-filter:blur(18px); }
+.game-hud-controls button { height:36px; padding:0 16px; border:1px solid rgba(255,255,255,.13); border-radius:99px; color:#fff; background:#0a1730; font-size:8px; font-weight:800; letter-spacing:.09em; cursor:pointer; }
 .game-hud-controls .game-hud-exit { color:#071020; background:#fff; }
 .game-hud-controls button:disabled { opacity:.45; }
 
@@ -167,7 +168,7 @@ button { border:0; }
   .collection-content,.system-content { padding:170px 6% 70px; }.collection-content h1,.system-content h1 { margin-top:12px; font-size:68px; }.collection-content>p,.system-content>p { margin-bottom:38px; font-size:16px; }
   .game-grid { grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:30px; }.game-grid .game-card { min-height:390px; border-radius:32px; }.game-grid .game-card-main { border-radius:30px; }
   .settings-grid { max-width:1540px; gap:26px; }.setting-card { min-height:255px; padding:40px; border-radius:36px; }.setting-card>i { right:36px; top:31px; font-size:43px; }.setting-card small { font-size:13px; }.setting-card strong { margin:20px 0 12px; font-size:39px; }.setting-card p { max-width:720px; font-size:17px; }.setting-card.power button { right:33px; bottom:30px; height:52px; padding:0 23px; font-size:12px; }
-  .game-hud { top:25px; left:30px; right:30px; height:66px; }.game-hud-identity { height:62px; padding:0 24px 0 9px; }.game-hud-identity span { width:45px; height:45px; font-size:20px; }.game-hud-identity strong { font-size:18px; }.game-hud-controls button { height:60px; padding:0 25px; font-size:13px; }
+  .frame-stage { inset:76px 0 0; }.game-hud { top:0; left:0; right:0; height:76px; padding:0 30px; }.game-hud-identity { height:62px; padding:0 24px 0 9px; }.game-hud-identity span { width:45px; height:45px; font-size:20px; }.game-hud-identity strong { font-size:18px; }.game-hud-controls button { height:52px; padding:0 25px; font-size:13px; }
   .profile-panel { width:900px; padding:72px 85px 78px; border-radius:45px; }.profile-icon { width:94px; height:94px; margin-bottom:34px; border-radius:29px; font-size:49px; }.profile-panel>span { font-size:13px; }.profile-panel h2 { margin:17px 0 15px; font-size:68px; }.profile-panel>p { margin-bottom:39px; font-size:18px; }.profile-input { height:86px; border-radius:23px; }.profile-input input { font-size:27px; }.profile-error { height:48px; padding-top:13px; font-size:11px; }.profile-confirm { height:76px; font-size:16px; }
   .ring-one { width:560px;height:560px }.ring-two { width:720px;height:720px }.boot-mark { width:132px;height:132px;border-radius:38px;font-size:72px }.boot-core>span { font-size:13px }.boot-core h1 { font-size:49px }.boot-core p { font-size:12px }.boot-progress { bottom:82px;width:390px;height:5px }.boot-status { bottom:48px;font-size:12px }
 }
@@ -236,6 +237,8 @@ button { border:0; }
 .media-mode .boot-core h1 { margin-top:10px; font-size:52px; letter-spacing:.24em; }
 .media-mode .boot-core p { font-size:11px; }
 .media-mode .game-hud-identity,.media-mode .game-hud-controls button { background:rgba(2,9,22,.94); }
+.media-mode .frame-stage { inset:64px 0 0; }
+.media-mode .game-hud { top:0; left:0; right:0; height:64px; padding:0 24px; background:#030a18; box-shadow:none; }
 .media-mode .game-hud-identity span { background:#163d85; }
 .media-mode .game-hud-identity span img { width:34px; }
 .media-mode img { -webkit-user-drag:none; }

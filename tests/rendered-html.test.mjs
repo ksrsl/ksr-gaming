@@ -30,11 +30,11 @@ test("server-renders the KSR Gaming launcher", async () => {
   assert.doesNotMatch(html, /CrazyGames/i);
 });
 
-test("ships the seven approved catalog entries", async () => {
+test("ships the thirteen approved catalog entries", async () => {
   const source = await readFile(new URL("../app/KSRGaming.tsx", import.meta.url), "utf8");
   const iframeEntries = [...source.matchAll(/iframe:\s*"https:\/\//g)];
 
-  assert.equal(iframeEntries.length, 7);
+  assert.equal(iframeEntries.length, 13);
   for (const title of [
     "SocCar",
     "Prison Escape",
@@ -43,6 +43,12 @@ test("ships the seven approved catalog entries", async () => {
     "SkillWarz",
     "BuildNow GG",
     "Zombie Ops",
+    "PolyTrack",
+    "Sniper Clash 3D",
+    "Subway Clash 2",
+    "NOOB: Zombie Shooting",
+    "Brawl Hero",
+    "Moto X3M: Spooky Land",
   ]) {
     assert.match(source, new RegExp(title.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
   }
@@ -65,8 +71,8 @@ test("requires a player identity and presents games as a dedicated console sessi
   assert.match(source, /wide \? game\.thumb : game\.cover/);
   assert.doesNotMatch(source, /onMouseEnter=\{\(\) => onSelect\(game\.id\)\}/);
   assert.doesNotMatch(source, /Screen Share|SHARED CONSOLE SESSION|CONNECTED DISPLAY/i);
-  assert.match(styles, /\.frame-stage\s*\{[^}]*position:absolute;[^}]*inset:0;/);
-  assert.match(styles, /\.game-hud\s*\{[^}]*top:16px;/);
+  assert.match(styles, /\.frame-stage\s*\{[^}]*position:absolute;[^}]*inset:56px 0 0;/);
+  assert.match(styles, /\.game-hud\s*\{[^}]*top:0;[^}]*left:0;[^}]*right:0;[^}]*height:56px;/);
   assert.match(styles, /@media \(min-width:1400px\) and \(min-height:800px\)/);
   assert.match(styles, /\.media-mode \.collection-backdrop\s*\{[^}]*filter:none;/);
   assert.match(styles, /\.media-mode \.profile-panel\s*\{[^}]*backdrop-filter:none;/);

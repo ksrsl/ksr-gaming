@@ -1,6 +1,8 @@
-# KSR Gaming — Second Life Hosted v0.4.1
+# KSR Gaming — Second Life Hosted v0.5.0
 
 KSR Gaming is an independent Media-on-a-Prim console for Second Life. It includes a cinematic blue-and-white startup, sliding console tabs, a game carousel, favorites, recent games, a focused full-screen player, and silent room synchronization.
+
+Version 0.5 adds the official KSR logo and an automatic `sl=1` in-world presentation mode. The normal website keeps its full visual treatment, while the Second Life surface uses the same composition with lighter effects, lower-cost transitions, optimized thumbnails, and coalesced synchronization updates.
 
 Live Media URL: `https://ksrsl.github.io/ksr-gaming/`
 
@@ -35,7 +37,7 @@ The KSR interface contains no third-party promotional labels, buttons, or tags. 
 
 If the model uses different link names, change the three link-name settings at the top of the controller instead of renaming the prims.
 
-The controller automatically reads the physical `SCREEN` prim proportions and updates its Media-on-a-Prim resolution at power-on, whenever the linkset or screen scale changes, and every two seconds while running. It identifies the two largest prim dimensions as the visible screen and ignores the thin depth axis, preventing the flattened 1920×256-style render. A 16:9 display renders at native 1920×1080. Set `AUTO_DETECT_SCREEN_AXES = FALSE` only when manual axis selection is required.
+The controller automatically reads the physical `SCREEN` prim proportions and updates its Media-on-a-Prim resolution at power-on, whenever the linkset or screen scale changes, and every two seconds while running. It identifies the two largest prim dimensions as the visible screen and ignores the thin depth axis. A 16:9 display uses the premium balanced 1600×900 profile—31% fewer rendered pixels than 1920×1080 while remaining sharp on an in-world television. Set `AUTO_DETECT_SCREEN_AXES = FALSE` only when manual axis selection is required.
 
 The console powers on automatically after the script is saved, reset, or rezzed. If the display is off, touching the `SCREEN` face also wakes it. Set `AUTO_POWER_ON = FALSE` only when a black/off state on reset is intentional.
 
@@ -46,7 +48,7 @@ The console powers on automatically after the script is saved, reset, or rezzed.
 - The screen can use any landscape or portrait proportion. The automatic adapter keeps the page native to the physical face instead of stretching a fixed 16:9 render.
 - The controller permits anyone to interact with the media and uses Second Life's minimal media controls.
 - Set `OWNER_ONLY_POWER = TRUE` if only the owner should control power.
-- Controller v0.4 creates a private synchronization room for each rezzed console. The first connected media surface becomes host; other viewers silently follow its dashboard navigation, selected game, launch, and exit state. No synchronization labels or counts are shown on the console.
+- Controller v0.5 creates a private synchronization room for each rezzed console. The first connected media surface becomes host; other viewers silently follow its dashboard navigation, selected game, launch, and exit state. No synchronization labels or counts are shown on the console.
 - Third-party game code runs inside a protected iframe, so KSR can synchronize the console session around it but cannot read or duplicate the game's private internal save/state.
 
 ## Local preview

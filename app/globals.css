@@ -13,6 +13,8 @@ button { border:0; }
 .console-brand { display:flex; align-items:center; gap:11px; padding:0; background:transparent; cursor:pointer; }
 .console-brand>span { display:grid; place-items:center; width:38px; height:38px; border-radius:12px; color:#fff; background:linear-gradient(145deg,#75b2ff,#145ee7); font-size:21px; font-weight:900; box-shadow:0 8px 24px rgba(0,85,230,.42),inset 0 1px rgba(255,255,255,.38); }
 .console-brand>b { font-size:12px; letter-spacing:.16em; }
+.console-brand>.brand-logo { width:82px; height:28px; overflow:hidden; border-radius:0; background:none; box-shadow:none; }
+.brand-logo img { display:block; width:100%; height:auto; }
 .console-tabs { height:100%; display:flex; align-items:center; gap:26px; }
 .console-tabs button { position:relative; height:100%; min-width:62px; display:flex; align-items:center; justify-content:center; gap:8px; padding:0 3px; color:rgba(220,232,249,.63); background:transparent; cursor:pointer; transition:color .22s,transform .28s cubic-bezier(.2,.9,.25,1); }
 .console-tabs button i { font:normal 21px/1 "Segoe UI Symbol","Segoe UI",sans-serif; }
@@ -108,6 +110,7 @@ button { border:0; }
 .game-hud-identity,.game-hud-controls { display:flex; align-items:center; gap:8px; pointer-events:auto; }
 .game-hud-identity { height:42px; padding:0 15px 0 6px; border:1px solid rgba(255,255,255,.13); border-radius:99px; background:rgba(0,5,14,.73); backdrop-filter:blur(18px); }
 .game-hud-identity span { display:grid; place-items:center; width:30px; height:30px; border-radius:50%; background:#2f7cff; font-weight:900; }
+.game-hud-identity span img { width:23px; height:auto; }
 .game-hud-identity strong { font-size:11px; text-transform:uppercase; }
 .game-hud-controls button { height:40px; padding:0 16px; border:1px solid rgba(255,255,255,.13); border-radius:99px; color:#fff; background:rgba(0,5,14,.73); font-size:8px; font-weight:800; letter-spacing:.09em; cursor:pointer; backdrop-filter:blur(18px); }
 .game-hud-controls .game-hud-exit { color:#071020; background:#fff; }
@@ -118,6 +121,7 @@ button { border:0; }
 .profile-aura { position:absolute; width:72vw; height:72vw; border:1px solid rgba(140,196,255,.16); border-radius:50%; box-shadow:0 0 120px rgba(47,124,255,.16); animation:float 5s ease-in-out infinite; }
 .profile-panel { position:relative; width:min(560px,82vw); padding:44px 52px 48px; border:1px solid rgba(162,207,255,.24); border-radius:30px; background:rgba(4,18,45,.86); box-shadow:0 38px 110px rgba(0,0,0,.5); text-align:center; backdrop-filter:blur(25px); }
 .profile-icon { display:grid; place-items:center; width:58px; height:58px; margin:0 auto 22px; border-radius:18px; background:linear-gradient(145deg,#75b2ff,#145ee7); font-size:30px; font-weight:900; }
+.profile-icon img { width:47px; height:auto; }
 .profile-panel>span { color:#a9d4ff; font:8px monospace; letter-spacing:.25em; }
 .profile-panel h2 { margin:10px 0 9px; font-size:42px; letter-spacing:-.045em; }
 .profile-panel>p { margin:0 auto 25px; color:#a1b1c8; font-size:11px; }
@@ -136,6 +140,7 @@ button { border:0; }
 .ring-one { width:330px; height:330px; border-left-color:#fff; }.ring-two { width:430px; height:430px; border-right-color:#2f7cff; animation-direction:normal,reverse; }
 .boot-core { position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; animation:core-in .8s .7s ease both; }
 .boot-mark { display:grid; place-items:center; width:80px; height:80px; margin-bottom:18px; border-radius:24px; background:linear-gradient(145deg,#86bdff,#1463ed); font-size:44px; font-weight:900; box-shadow:0 0 55px rgba(47,124,255,.5),inset 0 1px rgba(255,255,255,.45); }
+.boot-mark img { width:68px; height:auto; }
 .boot-core>span { color:#acd5ff; font:8px monospace; letter-spacing:.3em; }.boot-core h1 { margin:7px 0 2px; font-size:30px; letter-spacing:.2em; transform:translateX(.1em); }.boot-core p { margin:0; color:#8295b1; font:7px monospace; letter-spacing:.38em; }
 .boot-progress { position:absolute; bottom:48px; width:230px; height:3px; overflow:hidden; border-radius:99px; background:rgba(255,255,255,.1); }.boot-progress i { display:block; width:100%; height:100%; background:linear-gradient(90deg,#fff,#2f7cff,#9fd0ff); transform-origin:left; animation:load 2.7s .7s ease both; }
 .boot-status { position:absolute; bottom:27px; color:#91a8c7; font:7px monospace; letter-spacing:.22em; }
@@ -177,3 +182,60 @@ button { border:0; }
 }
 
 @media (prefers-reduced-motion:reduce) { *,*::before,*::after { animation-duration:.01ms !important; animation-delay:0ms !important; } }
+
+/* Second Life media mode: same premium composition with a much lighter render path. */
+.media-mode::before { content:""; position:absolute; z-index:1; inset:0; pointer-events:none; background:radial-gradient(circle at 78% 12%,rgba(42,125,255,.16),transparent 30%); }
+.media-mode::after { content:""; position:absolute; z-index:40; inset:0; pointer-events:none; border:1px solid rgba(134,190,255,.18); box-shadow:inset 0 0 0 1px rgba(255,255,255,.025); }
+.media-mode .console-header { height:112px; grid-template-columns:250px 1fr 280px auto; gap:26px; padding:0 46px; background:linear-gradient(180deg,rgba(1,7,20,.98),rgba(1,7,20,.82) 72%,transparent); backdrop-filter:none; }
+.media-mode .console-brand>.brand-logo { width:116px; height:32px; }
+.media-mode .console-brand>b { font-size:15px; letter-spacing:.24em; }
+.media-mode .console-tabs { gap:34px; }
+.media-mode .console-tabs button { min-width:88px; transition:color .16s ease,transform .16s ease; }
+.media-mode .console-tabs button i { font-size:29px; }
+.media-mode .console-tabs button span { font-size:13px; }
+.media-mode .console-search { height:50px; background:rgba(8,22,47,.92); backdrop-filter:none; }
+.media-mode .console-search input { font-size:14px; }
+.media-mode .console-user>span { width:48px; height:48px; box-shadow:none; }
+.media-mode .console-user>b { font-size:13px; }
+.media-mode .console-user time { min-width:92px; font-size:20px; }
+.media-mode .console-user button { width:46px; height:46px; }
+.media-mode .slide-forward { animation:media-page-forward .22s cubic-bezier(.2,.75,.2,1) both; }
+.media-mode .slide-back { animation:media-page-back .22s cubic-bezier(.2,.75,.2,1) both; }
+@keyframes media-page-forward { from{opacity:.35;transform:translate3d(4%,0,0)} to{opacity:1;transform:translate3d(0,0,0)} }
+@keyframes media-page-back { from{opacity:.35;transform:translate3d(-4%,0,0)} to{opacity:1;transform:translate3d(0,0,0)} }
+.media-mode .home-backdrop { animation:media-backdrop-in .2s ease-out both; transform:translateZ(0); }
+@keyframes media-backdrop-in { from{opacity:.45} to{opacity:1} }
+.media-mode .home-shade { background:linear-gradient(90deg,rgba(0,5,16,.96) 0%,rgba(0,5,16,.73) 34%,rgba(0,5,16,.1) 72%),linear-gradient(0deg,rgba(0,5,16,.98),rgba(0,5,16,.6) 23%,transparent 58%); }
+.media-mode .home-copy { left:6%; top:21%; width:min(48%,760px); }
+.media-mode .home-copy h1 { font-size:clamp(76px,7vw,112px); }
+.media-mode .home-copy p { max-width:620px; font-size:18px; }
+.media-mode .primary-action { min-width:168px; height:58px; font-size:14px; box-shadow:0 10px 26px rgba(0,0,0,.28); }
+.media-mode .round-action { width:58px; height:58px; backdrop-filter:none; }
+.media-mode .game-shelf { left:6%; bottom:4%; }
+.media-mode .shelf-label>span { font-size:25px; }
+.media-mode .shelf-label>small { font-size:10px; }
+.media-mode .game-strip { gap:20px; padding-bottom:14px; scroll-behavior:auto; }
+.media-mode .game-card { contain:layout paint; box-shadow:0 12px 24px rgba(0,0,0,.3); transition:transform .16s ease,border-color .16s ease; }
+.media-mode .game-card.wide { flex-basis:276px; height:155px; }
+.media-mode .game-card.selected { transform:translateY(-7px) scale(1.035); box-shadow:0 16px 34px rgba(0,0,0,.42),0 0 0 3px rgba(124,184,255,.16); }
+.media-mode .game-card-main img { object-position:center; }
+.media-mode .game-card-favorite,.media-mode .round-action,.media-mode .game-hud-identity,.media-mode .game-hud-controls button { backdrop-filter:none; }
+.media-mode .collection-backdrop { inset:0; width:100%; height:100%; filter:none; opacity:.18; transform:translateZ(0); }
+.media-mode .collection-shade { background:linear-gradient(180deg,rgba(1,7,19,.62),rgba(1,7,19,.94) 42%,#020817); }
+.media-mode .setting-card { box-shadow:0 14px 30px rgba(0,0,0,.22),inset 0 1px rgba(255,255,255,.06); }
+.media-mode .profile-aura { animation:none; box-shadow:none; background:radial-gradient(circle,rgba(48,125,255,.16),transparent 66%); }
+.media-mode .profile-panel { background:#071631; backdrop-filter:none; box-shadow:0 26px 70px rgba(0,0,0,.45); }
+.media-mode .boot-screen { animation:media-boot-away .25s 2.18s ease forwards; }
+@keyframes media-boot-away { to{opacity:0;visibility:hidden} }
+.media-mode .boot-glow { width:44vw; height:44vw; background:radial-gradient(circle,rgba(47,124,255,.3),transparent 66%); filter:none; animation:none; }
+.media-mode .boot-ring { animation:ring-in .45s ease both; }
+.media-mode .ring-two { display:none; }
+.media-mode .boot-mark { width:180px; height:68px; margin-bottom:24px; border-radius:0; background:none; box-shadow:none; }
+.media-mode .boot-mark img { width:176px; }
+.media-mode .boot-core>span { font-size:12px; }
+.media-mode .boot-core h1 { margin-top:10px; font-size:52px; letter-spacing:.24em; }
+.media-mode .boot-core p { font-size:11px; }
+.media-mode .game-hud-identity,.media-mode .game-hud-controls button { background:rgba(2,9,22,.94); }
+.media-mode .game-hud-identity span { background:#163d85; }
+.media-mode .game-hud-identity span img { width:34px; }
+.media-mode img { -webkit-user-drag:none; }

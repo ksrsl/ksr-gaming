@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { readFile, stat } from "node:fs/promises";
 import test from "node:test";
 
 async function render() {
@@ -21,7 +21,8 @@ test("server-renders the KSR Gaming launcher", async () => {
 
   const html = await response.text();
   assert.match(html, /<title>KSR Gaming<\/title>/i);
-  assert.match(html, /KSR GAMING/);
+  assert.match(html, /alt="KSR"/);
+  assert.match(html, />GAMING</);
   assert.match(html, /SELECT A TITLE/);
   assert.match(html, /SocCar/);
   assert.match(html, /Zombie Ops/);
@@ -58,10 +59,19 @@ test("requires a player identity and presents games as a dedicated console sessi
   assert.match(source, /slide-/);
   assert.match(source, /addEventListener\("pointerdown", focusMediaWindow, true\)/);
   assert.match(source, /iframeRef\.current\?\.focus/);
+  assert.match(source, /\.\/ksr-logo\.png/);
+  assert.match(source, /station-shell media-mode/);
+  assert.match(source, /params\.get\("sl"\) === "1"/);
+  assert.match(source, /wide \? game\.thumb : game\.cover/);
+  assert.doesNotMatch(source, /onMouseEnter=\{\(\) => onSelect\(game\.id\)\}/);
   assert.doesNotMatch(source, /Screen Share|SHARED CONSOLE SESSION|CONNECTED DISPLAY/i);
   assert.match(styles, /\.frame-stage\s*\{[^}]*position:absolute;[^}]*inset:0;/);
   assert.match(styles, /\.game-hud\s*\{[^}]*top:16px;/);
   assert.match(styles, /@media \(min-width:1400px\) and \(min-height:800px\)/);
+  assert.match(styles, /\.media-mode \.collection-backdrop\s*\{[^}]*filter:none;/);
+  assert.match(styles, /\.media-mode \.profile-panel\s*\{[^}]*backdrop-filter:none;/);
+  const logo = await stat(new URL("../public/ksr-logo.png", import.meta.url));
+  assert.ok(logo.size < 50000, `optimized logo should remain below 50 KB, received ${logo.size}`);
 });
 
 test("ships isolated shared-console infrastructure", async () => {
@@ -75,8 +85,8 @@ test("ships isolated shared-console infrastructure", async () => {
   assert.match(controller, /AUTO_RESOLUTION = TRUE/);
   assert.match(controller, /AUTO_POWER_ON = TRUE/);
   assert.match(controller, /AUTO_DETECT_SCREEN_AXES = TRUE/);
-  assert.match(controller, /MAX_MEDIA_PIXELS = 1920/);
-  assert.match(controller, /return \[1920, 1080\]/);
+  assert.match(controller, /MAX_MEDIA_PIXELS = 1600/);
+  assert.match(controller, /return \[1600, 900\]/);
   assert.match(controller, /llListSort\(\[size\.x, size\.y, size\.z\], 1, FALSE\)/);
   assert.match(controller, /PRIM_MEDIA_CONTROLS_MINI/);
   assert.doesNotMatch(controller, /PRIM_MEDIA_CONTROLS_NONE/);

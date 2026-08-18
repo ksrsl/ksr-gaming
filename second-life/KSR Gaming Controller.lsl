@@ -1,4 +1,4 @@
-// KSR Gaming - Second Life Media-on-a-Prim Controller v0.4.1
+// KSR Gaming - Second Life Media-on-a-Prim Controller v0.5.0
 // Drop this script into the console's root prim and compile it in Mono.
 
 string SITE_URL = "https://ksrsl.github.io/ksr-gaming/";
@@ -14,7 +14,7 @@ integer AUTO_RESOLUTION = TRUE;
 integer AUTO_DETECT_SCREEN_AXES = TRUE;
 integer SCREEN_WIDTH_AXIS = 0;  // Manual fallback: 0 = X, 1 = Y, 2 = Z
 integer SCREEN_HEIGHT_AXIS = 2; // Used only when AUTO_DETECT_SCREEN_AXES is FALSE
-integer MAX_MEDIA_PIXELS = 1920;
+integer MAX_MEDIA_PIXELS = 1600; // Premium in-world mode; 1600x900 on a 16:9 screen
 integer MIN_MEDIA_PIXELS = 256;
 
 integer gScreenLink = 0;
@@ -22,8 +22,8 @@ integer gPowerLink = 0;
 integer gHomeLink = 0;
 integer gPowered = FALSE;
 string gRoomToken = "";
-integer gMediaWidth = 1920;
-integer gMediaHeight = 1080;
+integer gMediaWidth = 1600;
+integer gMediaHeight = 900;
 
 ensureRoomToken()
 {
@@ -51,7 +51,7 @@ list adaptedResolution()
 {
     if (!AUTO_RESOLUTION || !gScreenLink)
     {
-        return [1920, 1080];
+        return [1600, 900];
     }
 
     vector size = llList2Vector(llGetLinkPrimitiveParams(gScreenLink, [PRIM_SIZE]), 0);
@@ -72,7 +72,7 @@ list adaptedResolution()
     }
     if (physicalWidth <= 0.001 || physicalHeight <= 0.001)
     {
-        return [1920, 1080];
+        return [1600, 900];
     }
 
     float ratio = physicalWidth / physicalHeight;

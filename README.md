@@ -31,11 +31,13 @@ The KSR interface contains no third-party promotional labels, buttons, or tags. 
 2. Name the power button prim `POWER`.
 3. Name the home button prim `HOME`.
 4. Set `SCREEN_FACE` to the display face number. It is `0` by default.
-5. Put `KSR Gaming Controller.lsl` in the root prim, save it with the Mono runtime, and touch `POWER`.
+5. Put `KSR Gaming Controller.lsl` in the root prim and save it with the Mono runtime. The display starts automatically; `POWER` toggles it afterward.
 
 If the model uses different link names, change the three link-name settings at the top of the controller instead of renaming the prims.
 
 The controller automatically reads the physical `SCREEN` prim proportions and updates its Media-on-a-Prim resolution at power-on, whenever the linkset or screen scale changes, and every two seconds while running. It uses up to 2048 pixels on the longest axis. The default flat-screen mapping is X for width and Z for height; change `SCREEN_WIDTH_AXIS` or `SCREEN_HEIGHT_AXIS` only if the screen mesh is oriented differently.
+
+The console powers on automatically after the script is saved, reset, or rezzed. If the display is off, touching the `SCREEN` face also wakes it. Set `AUTO_POWER_ON = FALSE` only when a black/off state on reset is intentional.
 
 ## Viewer use
 

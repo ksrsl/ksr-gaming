@@ -9,6 +9,7 @@ string POWER_LINK_NAME = "POWER";
 string HOME_LINK_NAME = "HOME";
 integer SCREEN_FACE = 0;
 integer OWNER_ONLY_POWER = FALSE;
+integer AUTO_POWER_ON = TRUE;
 integer AUTO_RESOLUTION = TRUE;
 integer SCREEN_WIDTH_AXIS = 0;  // 0 = X, 1 = Y, 2 = Z
 integer SCREEN_HEIGHT_AXIS = 2; // Flat screen default: X wide, Z tall
@@ -237,7 +238,14 @@ default
     {
         ensureRoomToken();
         refreshLinks();
-        powerOff();
+        if (AUTO_POWER_ON)
+        {
+            powerOn();
+        }
+        else
+        {
+            powerOff();
+        }
     }
 
     on_rez(integer startParameter)
@@ -277,7 +285,14 @@ default
 
             if (touchedLink == gScreenLink && gScreenLink)
             {
-                updateMediaResolution();
+                if (!gPowered)
+                {
+                    powerOn();
+                }
+                else
+                {
+                    updateMediaResolution();
+                }
             }
             else if (touchedLink == gHomeLink && gHomeLink)
             {

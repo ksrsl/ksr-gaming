@@ -24,25 +24,19 @@ test("server-renders the KSR Gaming launcher", async () => {
   assert.match(html, /alt="KSR"/);
   assert.match(html, />GAMING</);
   assert.match(html, /SELECT A TITLE/);
-  assert.match(html, /SocCar/);
-  assert.match(html, /Zombie Ops/);
+  assert.match(html, /Super Star Car/);
+  assert.match(html, /PolyTrack/);
   assert.doesNotMatch(html, /GameStation/i);
   assert.doesNotMatch(html, /CrazyGames/i);
 });
 
-test("ships the thirteen approved catalog entries", async () => {
+test("ships the seven streamlined catalog entries", async () => {
   const source = await readFile(new URL("../app/KSRGaming.tsx", import.meta.url), "utf8");
   const iframeEntries = [...source.matchAll(/iframe:\s*"https:\/\//g)];
 
-  assert.equal(iframeEntries.length, 13);
+  assert.equal(iframeEntries.length, 7);
   for (const title of [
-    "SocCar",
-    "Prison Escape",
     "Super Star Car",
-    "Riders: Downhill",
-    "SkillWarz",
-    "BuildNow GG",
-    "Zombie Ops",
     "PolyTrack",
     "Sniper Clash 3D",
     "Subway Clash 2",
@@ -51,6 +45,9 @@ test("ships the thirteen approved catalog entries", async () => {
     "Moto X3M: Spooky Land",
   ]) {
     assert.match(source, new RegExp(title.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
+  }
+  for (const removedTitle of ["SocCar", "Prison Escape", "Riders: Downhill", "SkillWarz", "BuildNow GG", "Zombie Ops"]) {
+    assert.doesNotMatch(source, new RegExp(removedTitle.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
   }
 });
 

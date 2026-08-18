@@ -1,8 +1,8 @@
-# KSR Gaming — Second Life Hosted v0.6.0
+# KSR Gaming — Second Life Hosted v0.6.1
 
 KSR Gaming is an independent Media-on-a-Prim console for Second Life. It includes a cinematic blue-and-white startup, sliding console tabs, a game carousel, favorites, recent games, a focused full-screen player, and silent room synchronization.
 
-Version 0.6 expands the catalog to thirteen games with six lightweight, simple-control additions. The in-game Reload and Exit controls now live in a dedicated console bar above the game instead of covering game buttons. Version 0.5 added the official KSR logo and automatic `sl=1` in-world presentation mode.
+Version 0.6.1 streamlines the catalog to seven selected games: Super Star Car plus six lightweight, simple-control additions. The in-game Reload and Exit controls live in a dedicated console bar above the game instead of covering game buttons.
 
 Live Media URL: `https://ksrsl.github.io/ksr-gaming/`
 
@@ -10,13 +10,13 @@ This is a separate project. It does not modify, replace, or share files with KSR
 
 ## Included catalog
 
-- SocCar
-- Prison Escape
 - Super Star Car
-- Riders: Downhill
-- SkillWarz
-- BuildNow GG
-- Zombie Ops
+- PolyTrack
+- Sniper Clash 3D
+- Subway Clash 2
+- NOOB: Zombie Shooting
+- Brawl Hero
+- Moto X3M: Spooky Land
 
 The KSR interface contains no third-party promotional labels, buttons, or tags. The launcher opens authorized external game pages in an iframe; content rendered inside those cross-origin pages remains controlled by the game provider. Removing provider branding inside a game requires its approved white-label build or no-brand embed URL.
 

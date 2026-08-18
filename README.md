@@ -1,8 +1,8 @@
-# KSR Gaming — Second Life Hosted v0.6.1
+# KSR Gaming — Second Life Hosted v0.6.2
 
 KSR Gaming is an independent Media-on-a-Prim console for Second Life. It includes a cinematic blue-and-white startup, sliding console tabs, a game carousel, favorites, recent games, a focused full-screen player, and silent room synchronization.
 
-Version 0.6.1 streamlines the catalog to seven selected games: Super Star Car plus six lightweight, simple-control additions. The in-game Reload and Exit controls live in a dedicated console bar above the game instead of covering game buttons.
+Version 0.6.2 gives selected game cards dedicated outline clearance so their complete white rounded border remains visible in-world. Version 0.6.1 streamlined the catalog to seven selected games and moved the in-game controls into a dedicated bar above the game.
 
 Live Media URL: `https://ksrsl.github.io/ksr-gaming/`
 

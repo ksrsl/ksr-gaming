@@ -59,7 +59,7 @@ button { border:0; }
 .shelf-label { display:flex; align-items:baseline; gap:13px; margin:0 0 10px 2px; }
 .shelf-label>span { font-size:18px; font-weight:500; }
 .shelf-label>small { color:#8295b1; font:7px monospace; letter-spacing:.17em; }
-.game-strip { display:flex; align-items:center; gap:14px; padding:9px 5.5% 12px 3px; overflow-x:auto; overflow-y:visible; scroll-snap-type:x proximity; scrollbar-width:none; }
+.game-strip { display:flex; align-items:center; gap:14px; margin:-11px 0 0 -11px; padding:20px 5.5% 12px 14px; overflow-x:auto; overflow-y:visible; scroll-snap-type:x proximity; scrollbar-width:none; }
 .game-strip::-webkit-scrollbar { display:none; }
 
 /* Game tiles */

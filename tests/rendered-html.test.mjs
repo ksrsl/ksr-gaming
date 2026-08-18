@@ -68,6 +68,7 @@ test("requires a player identity and presents games as a dedicated console sessi
   assert.match(source, /wide \? game\.thumb : game\.cover/);
   assert.doesNotMatch(source, /onMouseEnter=\{\(\) => onSelect\(game\.id\)\}/);
   assert.doesNotMatch(source, /Screen Share|SHARED CONSOLE SESSION|CONNECTED DISPLAY/i);
+  assert.match(styles, /\.game-strip\s*\{[^}]*margin:-11px 0 0 -11px;[^}]*padding:20px 5\.5% 12px 14px;/);
   assert.match(styles, /\.frame-stage\s*\{[^}]*position:absolute;[^}]*inset:56px 0 0;/);
   assert.match(styles, /\.game-hud\s*\{[^}]*top:0;[^}]*left:0;[^}]*right:0;[^}]*height:56px;/);
   assert.match(styles, /@media \(min-width:1400px\) and \(min-height:800px\)/);

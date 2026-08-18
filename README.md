@@ -1,4 +1,4 @@
-# KSR Gaming — Second Life Hosted v0.4
+# KSR Gaming — Second Life Hosted v0.4.1
 
 KSR Gaming is an independent Media-on-a-Prim console for Second Life. It includes a cinematic blue-and-white startup, sliding console tabs, a game carousel, favorites, recent games, a focused full-screen player, and silent room synchronization.
 
@@ -35,7 +35,7 @@ The KSR interface contains no third-party promotional labels, buttons, or tags. 
 
 If the model uses different link names, change the three link-name settings at the top of the controller instead of renaming the prims.
 
-The controller automatically reads the physical `SCREEN` prim proportions and updates its Media-on-a-Prim resolution at power-on, whenever the linkset or screen scale changes, and every two seconds while running. It uses up to 2048 pixels on the longest axis. The default flat-screen mapping is X for width and Z for height; change `SCREEN_WIDTH_AXIS` or `SCREEN_HEIGHT_AXIS` only if the screen mesh is oriented differently.
+The controller automatically reads the physical `SCREEN` prim proportions and updates its Media-on-a-Prim resolution at power-on, whenever the linkset or screen scale changes, and every two seconds while running. It identifies the two largest prim dimensions as the visible screen and ignores the thin depth axis, preventing the flattened 1920×256-style render. A 16:9 display renders at native 1920×1080. Set `AUTO_DETECT_SCREEN_AXES = FALSE` only when manual axis selection is required.
 
 The console powers on automatically after the script is saved, reset, or rezzed. If the display is off, touching the `SCREEN` face also wakes it. Set `AUTO_POWER_ON = FALSE` only when a black/off state on reset is intentional.
 

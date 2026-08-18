@@ -74,7 +74,10 @@ test("ships isolated shared-console infrastructure", async () => {
   assert.match(controller, /token=/);
   assert.match(controller, /AUTO_RESOLUTION = TRUE/);
   assert.match(controller, /AUTO_POWER_ON = TRUE/);
-  assert.match(controller, /MAX_MEDIA_PIXELS = 2048/);
+  assert.match(controller, /AUTO_DETECT_SCREEN_AXES = TRUE/);
+  assert.match(controller, /MAX_MEDIA_PIXELS = 1920/);
+  assert.match(controller, /return \[1920, 1080\]/);
+  assert.match(controller, /llListSort\(\[size\.x, size\.y, size\.z\], 1, FALSE\)/);
   assert.match(controller, /PRIM_MEDIA_CONTROLS_MINI/);
   assert.doesNotMatch(controller, /PRIM_MEDIA_CONTROLS_NONE/);
   assert.match(controller, /PRIM_MEDIA_FIRST_CLICK_INTERACT, TRUE/);

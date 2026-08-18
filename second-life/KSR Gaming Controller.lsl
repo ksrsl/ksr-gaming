@@ -1,4 +1,4 @@
-// KSR Gaming - Second Life Media-on-a-Prim Controller v0.4
+// KSR Gaming - Second Life Media-on-a-Prim Controller v0.4.1
 // Drop this script into the console's root prim and compile it in Mono.
 
 string SITE_URL = "https://ksrsl.github.io/ksr-gaming/";
@@ -11,9 +11,10 @@ integer SCREEN_FACE = 0;
 integer OWNER_ONLY_POWER = FALSE;
 integer AUTO_POWER_ON = TRUE;
 integer AUTO_RESOLUTION = TRUE;
-integer SCREEN_WIDTH_AXIS = 0;  // 0 = X, 1 = Y, 2 = Z
-integer SCREEN_HEIGHT_AXIS = 2; // Flat screen default: X wide, Z tall
-integer MAX_MEDIA_PIXELS = 2048;
+integer AUTO_DETECT_SCREEN_AXES = TRUE;
+integer SCREEN_WIDTH_AXIS = 0;  // Manual fallback: 0 = X, 1 = Y, 2 = Z
+integer SCREEN_HEIGHT_AXIS = 2; // Used only when AUTO_DETECT_SCREEN_AXES is FALSE
+integer MAX_MEDIA_PIXELS = 1920;
 integer MIN_MEDIA_PIXELS = 256;
 
 integer gScreenLink = 0;
@@ -21,8 +22,8 @@ integer gPowerLink = 0;
 integer gHomeLink = 0;
 integer gPowered = FALSE;
 string gRoomToken = "";
-integer gMediaWidth = 2048;
-integer gMediaHeight = 1152;
+integer gMediaWidth = 1920;
+integer gMediaHeight = 1080;
 
 ensureRoomToken()
 {
@@ -50,15 +51,28 @@ list adaptedResolution()
 {
     if (!AUTO_RESOLUTION || !gScreenLink)
     {
-        return [2048, 1152];
+        return [1920, 1080];
     }
 
     vector size = llList2Vector(llGetLinkPrimitiveParams(gScreenLink, [PRIM_SIZE]), 0);
-    float physicalWidth = axisSize(size, SCREEN_WIDTH_AXIS);
-    float physicalHeight = axisSize(size, SCREEN_HEIGHT_AXIS);
+    float physicalWidth;
+    float physicalHeight;
+    if (AUTO_DETECT_SCREEN_AXES)
+    {
+        // A flat display's two largest dimensions are its visible width and height.
+        // The smallest dimension is depth and must never be used for media aspect ratio.
+        list dimensions = llListSort([size.x, size.y, size.z], 1, FALSE);
+        physicalWidth = llList2Float(dimensions, 0);
+        physicalHeight = llList2Float(dimensions, 1);
+    }
+    else
+    {
+        physicalWidth = axisSize(size, SCREEN_WIDTH_AXIS);
+        physicalHeight = axisSize(size, SCREEN_HEIGHT_AXIS);
+    }
     if (physicalWidth <= 0.001 || physicalHeight <= 0.001)
     {
-        return [2048, 1152];
+        return [1920, 1080];
     }
 
     float ratio = physicalWidth / physicalHeight;

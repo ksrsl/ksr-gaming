@@ -1,8 +1,8 @@
-# KSR Gaming — Second Life Hosted v0.6.2
+# KSR Gaming — Second Life Hosted v0.6.3
 
 KSR Gaming is an independent Media-on-a-Prim console for Second Life. It includes a cinematic blue-and-white startup, sliding console tabs, a game carousel, favorites, recent games, a focused full-screen player, and silent room synchronization.
 
-Version 0.6.2 gives selected game cards dedicated outline clearance so their complete white rounded border remains visible in-world. Version 0.6.1 streamlined the catalog to seven selected games and moved the in-game controls into a dedicated bar above the game.
+Version 0.6.3 removes PolyTrack and every right-click-dependent title. The seven-game catalog now uses only left-click, WASD, arrow keys, space, and simple letter-key controls suitable for Second Life media interaction.
 
 Live Media URL: `https://ksrsl.github.io/ksr-gaming/`
 
@@ -11,9 +11,9 @@ This is a separate project. It does not modify, replace, or share files with KSR
 ## Included catalog
 
 - Super Star Car
-- PolyTrack
-- Sniper Clash 3D
-- Subway Clash 2
+- Highway Racer
+- Space Waves
+- Basket Random
 - NOOB: Zombie Shooting
 - Brawl Hero
 - Moto X3M: Spooky Land

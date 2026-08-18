@@ -25,7 +25,7 @@ test("server-renders the KSR Gaming launcher", async () => {
   assert.match(html, />GAMING</);
   assert.match(html, /SELECT A TITLE/);
   assert.match(html, /Super Star Car/);
-  assert.match(html, /PolyTrack/);
+  assert.match(html, /Highway Racer/);
   assert.doesNotMatch(html, /GameStation/i);
   assert.doesNotMatch(html, /CrazyGames/i);
 });
@@ -37,18 +37,19 @@ test("ships the seven streamlined catalog entries", async () => {
   assert.equal(iframeEntries.length, 7);
   for (const title of [
     "Super Star Car",
-    "PolyTrack",
-    "Sniper Clash 3D",
-    "Subway Clash 2",
+    "Highway Racer",
+    "Space Waves",
+    "Basket Random",
     "NOOB: Zombie Shooting",
     "Brawl Hero",
     "Moto X3M: Spooky Land",
   ]) {
     assert.match(source, new RegExp(title.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
   }
-  for (const removedTitle of ["SocCar", "Prison Escape", "Riders: Downhill", "SkillWarz", "BuildNow GG", "Zombie Ops"]) {
+  for (const removedTitle of ["SocCar", "Prison Escape", "Riders: Downhill", "SkillWarz", "BuildNow GG", "Zombie Ops", "PolyTrack", "Sniper Clash 3D", "Subway Clash 2"]) {
     assert.doesNotMatch(source, new RegExp(removedTitle.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
   }
+  assert.doesNotMatch(source, /RIGHT CLICK|RIGHT MOUSE/i);
 });
 
 test("requires a player identity and presents games as a dedicated console session", async () => {
